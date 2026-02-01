@@ -124,6 +124,34 @@ func createLexer(source string) *lexer {
 				lex.push(NewToken(NUMBER, match))
 				lex.advanceN(len(match))
 			}},
+
+			//string handler
+			{regexp.MustCompile(`"[^"]*"`), func(lex *lexer, regex *regexp.Regexp) {
+				match := regex.FindStringIndex(lex.remainder())
+				stringLiteral := lex.remainder()[match[0]+1 : match[1]-1]
+
+				lex.push(NewToken(STRING, stringLiteral))
+				lex.advanceN(len(stringLiteral) + 2)
+			}},
+
+			//comment handler
+			{regexp.MustCompile(`\/\/.*`), func(lex *lexer, regex *regexp.Regexp) {
+				match := regex.FindStringIndex(lex.remainder())
+				lex.advanceN(match[1])
+			}},
+
+			// symbol handler
+			{regexp.MustCompile(`[a-zA-Z_][a-zA-Z0-9_]*`), func(lex *lexer, regex *regexp.Regexp) {
+				value := regex.FindString(lex.remainder())
+
+				if kind, exists := reserved_lu[value]; exists {
+					lex.push(NewToken(kind, value))
+				} else {
+					lex.push(NewToken(IDENTIFIER, value))
+				}
+
+				lex.advanceN(len(value))
+			}},
 		},
 	}
 }

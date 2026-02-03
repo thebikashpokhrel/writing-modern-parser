@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	bytes, _ := os.ReadFile("./examples/code00.lang")
+	bytes, _ := os.ReadFile("./examples/code04.lang")
 	source := string(bytes)
 
 	fmt.Printf("Code: %s\n", source)

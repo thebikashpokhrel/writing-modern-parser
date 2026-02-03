@@ -1,0 +1,4 @@
+let test = "hello";
+let a = 2;
+const b = a *2;
+const check = a > 4;

@@ -66,3 +66,33 @@ func parse_binary_expr(p *parser, left ast.Expr, bp binding_power) ast.Expr {
 		Right:    right,
 	}
 }
+
+func parse_prefix_expr(p *parser) ast.Expr {
+	operatorToken := p.advance()
+	rhs := parse_expr(p, default_bp)
+
+	return ast.PrefixExpr{
+		Operator:  operatorToken,
+		RightExpr: rhs,
+	}
+}
+
+func parse_assignment_expr(p *parser, left ast.Expr, bp binding_power) ast.Expr {
+	operatorToken := p.advance()
+	rhs := parse_expr(p, bp)
+
+	return ast.AssignmentExpr{
+		Operator: operatorToken,
+		Assigne:  left,
+		Value:    rhs,
+	}
+}
+
+func parse_grouping_expr(p *parser) ast.Expr {
+	p.advance()
+
+	expr := parse_expr(p, default_bp)
+	p.expect(lexer.CLOSE_PAREN)
+
+	return expr
+}
